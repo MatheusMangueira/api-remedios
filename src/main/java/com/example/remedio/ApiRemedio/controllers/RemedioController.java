@@ -49,7 +49,12 @@ public class RemedioController {
 		var lista = repository.findAllByAtivoTrue().stream().map(DadosListagemRemerio::new).toList();
 
 		return ResponseEntity.ok(lista);
+	}
 
+	@GetMapping("/{id}")
+	public ResponseEntity<DadosDetalhamentoRemedio> detalhar(@PathVariable Long id) {
+		var remedio = repository.getReferenceById(id);
+		return ResponseEntity.ok(new DadosDetalhamentoRemedio(remedio));
 	}
 
 	@PutMapping
