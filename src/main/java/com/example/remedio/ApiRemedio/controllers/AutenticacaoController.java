@@ -9,7 +9,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.remedio.ApiRemedio.infra.DadosTokenJWT;
+import com.example.remedio.ApiRemedio.infra.TokenService;
 import com.example.remedio.ApiRemedio.usuarios.DadosAutenticacao;
+import com.example.remedio.ApiRemedio.usuarios.Usuario;
 
 import jakarta.validation.Valid;
 
@@ -20,11 +23,16 @@ public class AutenticacaoController {
 	@Autowired
 	private AuthenticationManager manager;
 
+	@Autowired
+	private TokenService tokenService;
+	
 	@PostMapping
 	public ResponseEntity<?> efetuarLogin(@RequestBody @Valid DadosAutenticacao dados) {
         var token = new UsernamePasswordAuthenticationToken(dados.login(), dados.senha());
 		var autenticacao = manager.authenticate(token);
-
-        return ResponseEntity.ok().build();
+		
+		var tokenJWT = tokenService.gerarToken((Usuario) autenticacao.getPrincipal());
+		
+        return ResponseEntity.ok(new DadosTokenJWT(tokenJWT));
 	}
 }
